@@ -4,13 +4,15 @@ pipeline {
         jdk 'openjdk-15.0.2'
     }
 
+    String root = 'e2e'
+
     stages {
         stage('Prepare') {
             steps {
                 git([
                     branch: env.BRANCH == null ? 'main' : env.BRANCH,
                     credentialsId: 'jenkins-ssh',
-                    url: 'git@github.com:mewore/e2e.git',
+                    url: "git@github.com:mewore/${root}.git",
                 ])
                 sh 'java -version'
             }
@@ -80,9 +82,12 @@ pipeline {
         always {
             archiveArtifacts([
                 artifacts: [
-                    'build/libs/**/*.jar',
-                    'e2e-api/build/libs/**/*.jar',
-                    ['.', 'e2e-api'].collect({it + '/build/reports/spotbugs/spotbugs-' + it + '.html'})
+                    [root, 'e2e-api'].collect({
+                        (it == root ? '' : (it + '/')) + 'build/libs/**/*.jar'
+                    }),
+                    [root, 'e2e-api'].collect({
+                        (it == root ? '' : (it + '/')) + "build/reports/spotbugs/spotbugs-${it}.html"
+                    })
                 ].flatten().join(','),
                 fingerprint: true,
             ])
