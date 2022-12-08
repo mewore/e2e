@@ -1,10 +1,10 @@
+String root = 'e2e'
+
 pipeline {
     agent any
     tools {
         jdk 'openjdk-15.0.2'
     }
-
-    String root = 'e2e'
 
     stages {
         stage('Prepare') {
