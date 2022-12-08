@@ -25,7 +25,7 @@ pipeline {
                     for (javaModule in ['', 'e2e-api']) {
                         tasksToRun.add(javaModule + ':spotbugsMain')
                         tasksToRun.add(javaModule + ':test')
-                        spotbugsCommands.add(copySpotbugsReportCmd(javaModule))
+                        spotbugsCommands.add(copySpotbugsReportCmd(javaModule, root))
                     }
 
                     sh './gradlew --parallel ' + tasksToRun.join(' ') + ' --no-daemon && ' +
@@ -104,8 +104,8 @@ pipeline {
     }
 }
 
-def copySpotbugsReportCmd(module) {
+def copySpotbugsReportCmd(module, root) {
     String dir = (module == '' ? '' : (module + '/')) + 'build/reports/spotbugs'
-    String suffix = module == '' ? '' : ('-' + module)
+    String suffix = '-' + (module == '' ? root : module)
     return "cp ${dir}/main.html ${dir}/spotbugs${suffix}.html"
 }
