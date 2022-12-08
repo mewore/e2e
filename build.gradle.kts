@@ -3,7 +3,11 @@ plugins {
     id("java")
     id("jacoco")
     id("com.github.spotbugs") version "4.7.3"
+    id("maven-publish")
 }
+
+java.sourceCompatibility = JavaVersion.VERSION_15
+java.targetCompatibility = JavaVersion.VERSION_15
 
 group = "moe.mewore.e2e"
 version = "0.1.0"
@@ -56,6 +60,20 @@ tasks.jar {
     val sourcesMain = sourceSets.main.get()
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) } + sourcesMain.output)
     duplicatesStrategy = DuplicatesStrategy.WARN
+}
+
+project.publishing.publications {
+    create<MavenPublication>("e2e") {
+        artifact(tasks.jar)
+        pom {
+            withXml {
+                val root = asNode()
+                root.appendNode("name", "e2e")
+                root.appendNode("description", "A bare bones tool for E2E testing of HTTP applications")
+                root.appendNode("url", "https://github.com/mewore/e2e")
+            }
+        }
+    }
 }
 
 tasks.create<JavaExec>("e2eTestSpringExampleJar") {

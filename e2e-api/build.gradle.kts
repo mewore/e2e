@@ -2,8 +2,10 @@ plugins {
     id("java")
     id("jacoco")
     id("com.github.spotbugs")
+    id("maven-publish")
 }
 
+group = "moe.mewore.e2e"
 version = rootProject.version
 
 repositories {
@@ -40,4 +42,19 @@ jacoco {
 tasks.jacocoTestReport {
     dependsOn.add(tasks.test)
     reports.xml.required.set(true)
+}
+
+project.publishing.publications {
+    create<MavenPublication>("e2eApi") {
+        artifactId = "e2e-api"
+        artifact(tasks.jar)
+        pom {
+            withXml {
+                val root = asNode()
+                root.appendNode("name", "e2e-api")
+                root.appendNode("description", "A bare bones tool for E2E testing of HTTP applications")
+                root.appendNode("url", "https://github.com/mewore/e2e")
+            }
+        }
+    }
 }
