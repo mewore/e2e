@@ -105,6 +105,7 @@ pipeline {
 }
 
 def copySpotbugsReportCmd(module) {
-    String dir = (module == root ? '' : (module + '/')) + 'build/reports/spotbugs'
-    return "cp ${dir}/main.html ${dir}/spotbugs-${module}.html"
+    String dir = (module == '' ? '' : (module + '/')) + 'build/reports/spotbugs'
+    String suffix = module == '' ? '' : ('-' + module)
+    return "cp ${dir}/main.html ${dir}/spotbugs${suffix}.html"
 }
