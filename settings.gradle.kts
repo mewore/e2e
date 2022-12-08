@@ -15,6 +15,6 @@ pluginManagement {
 }
 
 rootProject.name = "e2e"
-include("spring-example")
 include("e2e-api")
+include("spring-example")
 include("spring-example-e2e")
